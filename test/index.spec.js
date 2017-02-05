@@ -82,7 +82,7 @@ describe('implementations', () => {
 	});
 });
 
-describe('performance', () => {
+describe.skip('performance', () => {
 	performanceTests.forEach(test => {
 		const implementationResults = [];
 		
