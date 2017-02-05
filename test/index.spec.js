@@ -3,55 +3,123 @@ const quoted = require('../');
 
 const tests = [
 	{
-		destringion: 'finds single quoted text',
+		description: 'finds single quoted text',
 		string: '\'foo\'',
 		texts: ['foo']
 	},
 	{
-		destringion: 'finds double quoted text',
+		description: 'finds double quoted text',
 		string: '\"foo\"',
 		texts: ['foo']
 	},
 	{
-		destringion: 'finds single quoted text with double quotes',
+		description: 'finds single quoted text with double quotes',
 		string: '\'fo"o"\'',
 		texts: [
 			'fo"o"'
 		]
 	},
 	{
-		destringion: 'finds double quoted text with single quotes',
+		description: 'finds double quoted text with single quotes',
 		string: '"fo\'o\'"',
 		texts: [
 			'fo\'o\''
 		]
 	},
 	{
-		destringion: 'finds quoted text with escaped characters',
+		description: 'finds quoted text with escaped characters',
 		string: '"foo\\bar"',
 		texts: [
 			'foo\\bar'
 		]
 	},
 	{
-		destringion: 'finds both single and double quoted text in string',
+		description: 'finds both single and double quoted text in string',
 		string: '/* "foo" */const bar=\'bar\'',
 		texts: ['foo', 'bar']
 	},
 	{
-		destringion: 'does not find empty strings',
+		description: 'does not find empty strings',
 		string: '""',
 		texts: []
 	}
 ];
 
-describe('quoted', () => {
-	tests.forEach(test => {
-		it(test.destringion, () => {
-			const actual = Array.from(quoted(test.string));
-			const expected = test.texts;
+const performanceTests = [
+	{
+		description: 'short string with two quoted texts',
+		iterations: 100000,
+		string: '"foo","bar"',
+		expectedWinner: 'quoted'
+	},
+	{
+		description: 'longer string with no quoted texts',
+		iterations: 100000,
+		string: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque quis augue ac nunc pharetra ullamcorper at et augue. Curabitur tincidunt urna sit amet odio laoreet, nec bibendum arcu pulvinar. Cras egestas nulla a libero mattis, sed aliquam orci iaculis. Aenean tristique enim non lacus maximus congue. Vivamus volutpat, lacus eu interdum feugiat, urna dolor placerat ligula, nec aliquam ante dui vitae tellus. Donec imperdiet ligula ornare aliquam rutrum. Integer placerat gravida nibh id pharetra. Mauris a lorem tempus, lobortis tortor at, posuere mauris. Morbi aliquam dictum turpis ut volutpat.',
+		expectedWinner: 'quotedRegExp'
+	}
+];
 
-			assert.deepEqual(actual, expected);
+const implementations = {
+	quoted: quoted,
+	quotedRegExp: quotedRegExp
+};
+
+Object.keys(implementations).forEach(implementationName => {
+	const implementation = implementations[implementationName];
+
+	describe(implementationName, () => {
+		tests.forEach(test => {
+			it(test.description, () => {
+				const texts = implementation(test.string);
+				const actual = Array.from(texts);
+				const expected = test.texts;
+
+				assert.deepEqual(actual, expected);
+			});
 		});
 	});
 });
+
+describe('performance', () => {
+	performanceTests.forEach(test => {
+		const implementationResults = [];
+		
+		before(() => {
+			Object.keys(implementations).forEach(implementationName => {
+				const implementation = implementations[implementationName];
+				const begun = process.hrtime();
+				for (var i = 0; i < test.iterations; i++) {
+					implementation(test.string);
+				}
+				const elapsed = process.hrtime(begun);
+				implementationResults.push({
+					name: implementationName,
+					elapsed: elapsed[0] * 1e9 + elapsed[1]
+				});
+			});
+		});
+
+		it(test.description + ' won by ' + test.expectedWinner, () => {
+			implementationResults.sort((a,b) => a.elapsed - b.elapsed);
+			const actualWinner = implementationResults[0].name;
+			
+			assert.equal(actualWinner, test.expectedWinner, JSON.stringify(implementationResults, null, 4));
+		});
+	});
+});
+
+function quotedRegExp (string) {
+	const expression = /(["'])(?:(?=(\\?))\2.)*?\1/gm;
+	const texts = new Set();
+	const emptyString = '';
+	var match;
+	while (match = expression.exec(string)) {
+		const text = match[0].slice(1, -1);
+		if (text !== emptyString) {
+			texts.add(text);
+		}
+	}
+
+	return texts;
+}
