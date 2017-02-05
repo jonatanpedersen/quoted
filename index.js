@@ -1,5 +1,6 @@
 'use strict';
 module.exports = quoted;
+module.exports.regExp = quotedRegExp;
 
 function quoted (string) {
 	const backslash = '\\';
@@ -38,6 +39,21 @@ function quoted (string) {
 			}
 		} else {
 			text += char;
+		}
+	}
+
+	return texts;
+}
+
+function quotedRegExp (string) {
+	const expression = /(["'])(?:(?=(\\?))\2.)*?\1/gm;
+	const texts = new Set();
+	const emptyString = '';
+	var match;
+	while (match = expression.exec(string)) {
+		const text = match[0].slice(1, -1);
+		if (text !== emptyString) {
+			texts.add(text);
 		}
 	}
 

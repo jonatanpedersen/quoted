@@ -62,7 +62,7 @@ const performanceTests = [
 
 const implementations = {
 	quoted: quoted,
-	quotedRegExp: quotedRegExp
+	quotedRegExp: quoted.regExp
 };
 
 Object.keys(implementations).forEach(implementationName => {
@@ -108,18 +108,3 @@ describe('performance', () => {
 		});
 	});
 });
-
-function quotedRegExp (string) {
-	const expression = /(["'])(?:(?=(\\?))\2.)*?\1/gm;
-	const texts = new Set();
-	const emptyString = '';
-	var match;
-	while (match = expression.exec(string)) {
-		const text = match[0].slice(1, -1);
-		if (text !== emptyString) {
-			texts.add(text);
-		}
-	}
-
-	return texts;
-}
