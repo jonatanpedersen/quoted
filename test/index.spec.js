@@ -65,17 +65,18 @@ const implementations = {
 	quotedRegExp: quoted.regExp
 };
 
-Object.keys(implementations).forEach(implementationName => {
-	const implementation = implementations[implementationName];
+describe('implementations', () => {
+	Object.keys(implementations).forEach(implementationName => {
+		const implementation = implementations[implementationName];
 
-	describe(implementationName, () => {
-		tests.forEach(test => {
-			it(test.description, () => {
-				const texts = implementation(test.string);
-				const actual = Array.from(texts);
-				const expected = test.texts;
+		describe(implementationName, () => {
+			tests.forEach(test => {
+				it(test.description, () => {
+					const actual = implementation(test.string);
+					const expected = test.texts;
 
-				assert.deepEqual(actual, expected);
+					assert.deepEqual(actual, expected);
+				});
 			});
 		});
 	});

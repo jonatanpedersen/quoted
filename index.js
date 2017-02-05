@@ -7,7 +7,7 @@ function quoted (string) {
 	const doubleQuote = '\"';
 	const singleQuote = '\'';
 	const emptyString = '';
-	const texts = new Set();
+	const texts = [];
 	var quote;
 	var escaping;
 	var recording;
@@ -31,7 +31,7 @@ function quoted (string) {
 					recording = false;
 					
 					if (text !== emptyString) {
-						texts.add(text);
+						texts.push(text);
 					}
 				} else {
 					text += char;
@@ -47,13 +47,13 @@ function quoted (string) {
 
 function quotedRegExp (string) {
 	const expression = /(["'])(?:(?=(\\?))\2.)*?\1/gm;
-	const texts = new Set();
+	const texts = [];
 	const emptyString = '';
 	var match;
 	while (match = expression.exec(string)) {
 		const text = match[0].slice(1, -1);
 		if (text !== emptyString) {
-			texts.add(text);
+			texts.push(text);
 		}
 	}
 
