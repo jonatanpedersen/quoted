@@ -3,7 +3,6 @@ Finds single and double quoted text in a string.
 
 [![Build Status](https://travis-ci.org/jonatanpedersen/quoted.svg?branch=master)](https://travis-ci.org/jonatanpedersen/quoted)
 [![NPM Version](https://img.shields.io/npm/v/quoted.svg)](https://www.npmjs.com/package/quoted)
-[![NSP Status](https://nodesecurity.io/orgs/jonatanpedersen/projects/66f2431f-ab56-45b3-83e4-0d3fac2040ee/badge)](https://nodesecurity.io/orgs/jonatanpedersen/projects/66f2431f-ab56-45b3-83e4-0d3fac2040ee)
 [![Greenkeeper badge](https://badges.greenkeeper.io/jonatanpedersen/quoted.svg)](https://greenkeeper.io/)
 [![Coverage Status](https://coveralls.io/repos/github/jonatanpedersen/quoted/badge.svg)](https://coveralls.io/github/jonatanpedersen/quoted)
 
